@@ -92,6 +92,37 @@
 
 - 以ucore/rcore lab8的answer为例，ucore的系统调用有哪些？大致的功能分类有哪些？
 
+  系统调用有：
+
+  ~~~c++
+  static int (*syscalls[])(uint32_t arg[]) = {
+      [SYS_exit]              sys_exit,
+      [SYS_fork]              sys_fork,
+      [SYS_wait]              sys_wait,
+      [SYS_exec]              sys_exec,
+      [SYS_yield]             sys_yield,
+      [SYS_kill]              sys_kill,
+      [SYS_getpid]            sys_getpid,
+      [SYS_putc]              sys_putc,
+      [SYS_pgdir]             sys_pgdir,
+      [SYS_gettime]           sys_gettime,
+      [SYS_lab6_set_priority] sys_lab6_set_priority,
+      [SYS_sleep]             sys_sleep,
+      [SYS_open]              sys_open,
+      [SYS_close]             sys_close,
+      [SYS_read]              sys_read,
+      [SYS_write]             sys_write,
+      [SYS_seek]              sys_seek,
+      [SYS_fstat]             sys_fstat,
+      [SYS_fsync]             sys_fsync,
+      [SYS_getcwd]            sys_getcwd,
+      [SYS_getdirentry]       sys_getdirentry,
+      [SYS_dup]               sys_dup,
+  };
+  ~~~
+
+  大致的分类有：
+
    *  进程管理：包括 fork/exit/wait/exec/yield/kill/getpid/sleep
    *  文件操作：包括 open/close/read/write/seek/fstat/fsync/getcwd/getdirentry/dup
    *  内存管理：pgdir命令
@@ -111,8 +142,29 @@
 
 ## 3.6 请分析函数调用和系统调用的区别
 - 系统调用与函数调用的区别是什么？
+
+  - 汇编指令的区别
+    - 系统调用：使用INT和IRET指令
+    - 函数调用：使用CALL和RET指令
+  - 安全性的区别
+    - 系统调用有堆栈和特权级的转换过程，函数调用没有这样的过程，系统调用相对更为安全
+  - 性能的区别
+    - 时间角度：系统调用比函数调用要做更多和特权级切换的工作，所以需要更多的时间开销
+    - 空间角度：在一些情况下，如果函数调用采用静态编译，往往需要大量的空间开销，此时系统调用更具有优势
+
 - 通过分析x86中函数调用规范以及`int`、`iret`、`call`和`ret`的指令准确功能和调用代码，比较x86中函数调用与系统调用的堆栈操作有什么不同？
+
+  * 系统调用
+    * INT和IRET指令应用于系统调用
+    * 系统调用时，对战切换和特权级的转换
+
+  * 函数调用
+    * CALL和RET用于常规调用
+    * 常规调用是没有堆栈切换
+
 - 通过分析RV中函数调用规范以及`ecall`、`eret`、`jal`和`jalr`的指令准确功能和调用代码，比较x86中函数调用与系统调用的堆栈操作有什么不同？
+
+  
 
 
 ## 课堂实践 （在课堂上根据老师安排完成，课后不用做）
